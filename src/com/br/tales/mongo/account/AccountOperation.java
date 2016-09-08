@@ -5,6 +5,11 @@
  */
 package com.br.tales.mongo.account;
 
+import com.br.tales.mongo.account.exceptions.CharacterNameUsed;
+import com.br.tales.mongo.account.exceptions.UpdateCreateCharacterFail;
+import com.br.tales.mongo.account.exceptions.UserAlreadyUsed;
+import com.br.tales.mongo.account.exceptions.FailSaveCharacter;
+import com.br.tales.mongo.account.exceptions.AccountDontExist;
 import com.br.tales.dilleyer.account.Account;
 import com.br.tales.dilleyer.account.Dilleyer;
 import com.br.tales.helper.factory.FactoryObjects;

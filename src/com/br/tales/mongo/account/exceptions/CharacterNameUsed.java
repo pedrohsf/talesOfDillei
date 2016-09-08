@@ -3,28 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.br.tales.mongo.account;
+package com.br.tales.mongo.account.exceptions;
 
 /**
  *
  * @author Dillei
  */
-public class UserAlreadyUsed extends Exception {
+public class CharacterNameUsed extends Exception {
 
     /**
-     * Creates a new instance of <code>UserAlreadyUsed</code> without detail
+     * Creates a new instance of <code>CharacterNameUsed</code> without detail
      * message.
      */
-    public UserAlreadyUsed() {
+    public CharacterNameUsed() {
     }
 
     /**
-     * Constructs an instance of <code>UserAlreadyUsed</code> with the specified
-     * detail message.
+     * Constructs an instance of <code>CharacterNameUsed</code> with the
+     * specified detail message.
      *
      * @param msg the detail message.
      */
-    public UserAlreadyUsed(String msg) {
+    public CharacterNameUsed(String msg) {
         super(msg);
     }
 }
