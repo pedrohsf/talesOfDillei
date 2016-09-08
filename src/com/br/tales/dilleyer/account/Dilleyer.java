@@ -16,8 +16,8 @@ import org.bson.Document;
  */
 public class Dilleyer {
     
-    private String nome;
-    private boolean logado;
+    public String nome;
+    public boolean logado;
     public KeyLocalization pos;
     
     public Dilleyer(String nome){
