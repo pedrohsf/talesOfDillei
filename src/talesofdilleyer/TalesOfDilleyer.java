@@ -14,6 +14,7 @@ import com.br.tales.map.WalkDirection;
 import com.br.tales.mongo.account.exceptions.AccountDontExist;
 import com.br.tales.mongo.account.AccountOperation;
 import com.br.tales.mongo.account.exceptions.UserAlreadyUsed;
+import com.br.tales.tales.server.DilleyerServer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -32,21 +33,8 @@ public class TalesOfDilleyer {
      */
     public static void main(String[] args) {
        
-        Account ac;
-       
-        AccountOperation ao = new AccountOperation();
-        try {
-            ac = ao.existAccount("arrois", "senha");
-            Dilleyer d = ac.characters.get(0);
-            d.logado = false;
-            
-            ao.saveDilleyer(ac);
-            
-            
-        } catch (Exception ex) {
-            Logger.getLogger(TalesOfDilleyer.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
+        DilleyerServer server = new DilleyerServer();
         
         
         
