@@ -23,6 +23,8 @@ public class DilleyerSocketPlayer {
     public DilleyerSocketPlayer(DilleyerSocket dilSocket, Dilleyer charLogado){
         this.dilSocket = dilSocket;
         this.charLogado = charLogado;
+        // salvando personagem indicando que alguém está conectado nele.
+        this.saveCharacter(true);
     }
     
     public void play(){
@@ -33,10 +35,12 @@ public class DilleyerSocketPlayer {
     
     
     // Salva alterações da conta no Socket
-    private void saveAccountSocket(){
+    private void saveCharacter(Boolean logado_deslogado){
         
         if(dilSocket.getAcc() != null){
             try{
+                // char logado
+                this.charLogado.logado = logado_deslogado;
                 dilSocket.getBanco().saveDilleyer(dilSocket.getAcc());
             }catch(FailSaveCharacter e){
                 System.out.println(e + "Conta : " + dilSocket.getAcc().user);

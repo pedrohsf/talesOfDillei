@@ -45,7 +45,7 @@ public class AccountOperation {
       
             account = existAccount(account.user, account.password);
             // O personagem não existe \/
-            if(characterDontExist(account, nome)){
+            if(characterDontExist(account, nome)){ 
                 // O personagem é adicionado a conta
                 account.characters.add(new Dilleyer(nome));
                 

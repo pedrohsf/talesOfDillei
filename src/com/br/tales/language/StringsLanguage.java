@@ -21,4 +21,7 @@ public class StringsLanguage {
     public static String tryNewAccountFailUserAlreadyUsed = "Não foi possível criar a conta, pois o usuário já está em uso";
     public static String tryLoginFailEmptyStrings = "Não foi possível logar, suas informe corretamente usuário e senha";
     public static String tryLoginFailCharacterDoesExist = "Não foi possível se conectar neste personage, pois ele não existe na sua conta";
+    public static String characterNameEmptyOrInvalid = "Nome de personagem vazio, escolha um";
+
+    
 }

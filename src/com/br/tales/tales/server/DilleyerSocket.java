@@ -10,6 +10,7 @@ import com.br.tales.dilleyer.account.Dilleyer;
 import com.br.tales.language.StringsLanguage;
 import com.br.tales.mongo.account.AccountOperation;
 import com.br.tales.mongo.account.exceptions.AccountDontExist;
+import com.br.tales.mongo.account.exceptions.CharacterNameUsed;
 import com.br.tales.mongo.account.exceptions.FailSaveCharacter;
 import com.br.tales.mongo.account.exceptions.UserAlreadyUsed;
 import java.io.DataInputStream;
@@ -66,7 +67,24 @@ public class DilleyerSocket implements Runnable {
 
                     sendToClient("tryLogin", this.acc.toDocument());// envia os personagens para logar
                     
-                    chooseCharacterToStarPlay();
+                    recive = this.newReciveToDocument(this.waitRecive());// espera ate a resposta
+                    
+                    // O jogador pode ou criar um personagem ou logar em algum
+                    // caso ele crie algum ele continuará logado e receberá a nova lista de personagens
+                    if(
+                        recive.getString("typeRequest") != null &&
+                        recive.getString("typeRequest").equals("tryNewCharacter") ||
+                        recive.getString("typeRequest").equals("tryLogin")
+                        ){
+                        // caso ele queira criar um personagem
+                        if(recive.getString("typeRequest").equals("tryNewCharacter")){
+                            tryNewCharacter(recive);
+                        }else if(recive.getString("typeRequest").equals("tryLogin")){
+                            chooseCharacterToStarPlay(recive);
+                        }
+                    
+                    }
+                    
                     
                 }//  caso não consiga logar, ele sai direto   
             }
@@ -76,11 +94,36 @@ public class DilleyerSocket implements Runnable {
         }
     }
     
-    private void chooseCharacterToStarPlay(){
-        Document reciveCharToLogin = this.newReciveToDocument(this.waitRecive());// espera ate a resposta
-        // verifica se o personagem existe
-        String typeRequest = reciveCharToLogin.getString("typeRequest");
-        String characterName = reciveCharToLogin.getString("characterName");
+    private void tryNewCharacter(Document doc){
+        if(validDocumentTryNewCharacter(doc)){
+            try {
+                this.banco.createNewDilleyer(acc, doc.getString("newCharacterName"));
+            } catch(CharacterNameUsed ex){
+                this.sendToClient("tryNewCharacter", StringsLanguage.characterNameUsed);
+                Logger.getLogger(DilleyerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            
+            }
+            catch (Exception ex) {
+                this.sendToClient("tryNewCharacter", ex.getMessage());
+                Logger.getLogger(DilleyerSocket.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private boolean validDocumentTryNewCharacter(Document doc){
+        // verifica se a menssagem não é nula e nem está vazia
+        if( doc.getString("newCharacterName") != null)
+        if( !doc.getString("newCharacterName").isEmpty())
+                return true;
+        // se for nula ou vazia envia menssagem de erro
+        sendToClient("tryLogin", StringsLanguage.characterNameEmptyOrInvalid);
+        return false;
+    } 
+    
+    private void chooseCharacterToStarPlay(Document doc){
+        
+        String typeRequest = doc.getString("typeRequest");
+        String characterName = doc.getString("characterName");
         
         if (    (typeRequest != null && typeRequest.equals("tryLogin")) &&
                 (characterName != null)
@@ -138,7 +181,7 @@ public class DilleyerSocket implements Runnable {
                 banco.registerNewAccount(new Account(doc.getString("user"), 
                                                     doc.getString("password"), 
                                                     doc.getString("email")));
-                sendToClient("tryNewAccount",StringsLanguage.tryNewAccountSucess); 
+                sendToClient("tryNewAccount",StringsLanguage.tryNewAccountSucess);  
             } catch (UserAlreadyUsed ex) { // se a conta já existir, envia erro ao client
                sendToClient("tryNewAccount",StringsLanguage.tryNewAccountFailUserAlreadyUsed);
                System.out.println(ex);
@@ -183,6 +226,7 @@ public class DilleyerSocket implements Runnable {
         
         try{
             Document doc = new Document();
+            System.out.println(json);
             doc = Document.parse(json);
             return doc;
         }catch(Exception e){
@@ -220,6 +264,7 @@ public class DilleyerSocket implements Runnable {
         socket.close();
     }
     
+    // Resonsável por fechar este socket e dar Finalize na instância
     private void closeThisSocket(){
         try {
             System.out.println("Desconectado : " + this.socket.getInetAddress());
